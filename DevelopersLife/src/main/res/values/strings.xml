@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Developers Life</string>
+
+    <string name="category_latest">Последние</string>
+    <string name="category_best">Лучшие</string>
+    <string name="category_hot">Горячие</string>
+
+    <string name="network_error">Произошла ошибка при загрузке данных.Проверьте\nподключение к сети.</string>
+    <string name="retry">Повторить</string>
+</resources>
