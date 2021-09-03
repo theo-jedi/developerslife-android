@@ -33,7 +33,6 @@ class CategoryFragment : Fragment() {
         _binding = FragmentCategoryBinding.inflate(inflater, container, false)
 
         val category = arguments?.getSerializable(FRAGMENT_CATEGORY_KEY) as Category
-        binding.textview.text = category.uiName
 
         return binding.root
     }
