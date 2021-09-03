@@ -85,10 +85,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/network_error"
-                app:layout_constraintBottom_toBottomOf="@id/retry_button"
+                app:layout_constraintBottom_toTopOf="@id/retry_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/network_icon" />
+                app:layout_constraintTop_toBottomOf="@id/network_icon" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/retry_button"
