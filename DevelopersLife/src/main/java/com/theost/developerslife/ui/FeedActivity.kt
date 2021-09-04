@@ -20,10 +20,8 @@ class FeedActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed)
-
         val categoryPages = findViewById<ViewPager2>(R.id.category_pages)
         val categoryTabs = findViewById<TabLayout>(R.id.category_tabs)
-
         categoryPages.adapter = CategoryPageAdapter(this, categoryList)
         TabLayoutMediator(categoryTabs, categoryPages) { tab, position ->
             tab.text = categoryList[position].uiName
