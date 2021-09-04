@@ -1,2 +1,2 @@
 # Developers Life
-Simple meme feed
+Jokes feed
