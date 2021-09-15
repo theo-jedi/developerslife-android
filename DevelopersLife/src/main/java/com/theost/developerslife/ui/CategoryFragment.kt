@@ -25,7 +25,7 @@ class CategoryFragment : Fragment() {
     companion object {
         private const val FRAGMENT_CATEGORY_KEY = "category"
 
-        fun newFragment(category: Category) : Fragment {
+        fun newFragment(category: Category): Fragment {
             val fragment = CategoryFragment()
             val bundle = Bundle()
             bundle.putSerializable(FRAGMENT_CATEGORY_KEY, category)
@@ -51,7 +51,7 @@ class CategoryFragment : Fragment() {
         category = arguments?.getSerializable(FRAGMENT_CATEGORY_KEY) as Category
 
         viewModel.loadingStatus.observe(viewLifecycleOwner) { status ->
-            when(status!!) {
+            when (status!!) {
                 Status.LOADING -> showLoading()
                 Status.ERROR -> showNetworkError()
                 Status.SUCCESS -> showContent()
@@ -60,15 +60,18 @@ class CategoryFragment : Fragment() {
         }
 
         viewModel.allData.observe(viewLifecycleOwner) { onPostReceived(it) }
+        viewModel.currentPosition.observe(viewLifecycleOwner) { currentPosition = it }
 
         binding.networkButton.setOnClickListener { loadPost(Direction.DEFAULT) }
         binding.welcomeButton.setOnClickListener { loadPost(Direction.NEXT) }
         binding.nextButton.setOnClickListener { loadPost(Direction.NEXT) }
         binding.prevButton.setOnClickListener { loadPost(Direction.PREV) }
 
-        updateButtons()
-
         return binding.root
+    }
+
+    private fun loadPost(direction: Direction) {
+        lifecycleScope.launch { viewModel.loadPost(category, direction) }
     }
 
     private fun onPostReceived(post: Post) {
@@ -100,46 +103,82 @@ class CategoryFragment : Fragment() {
             }).into(binding.contentImage)
     }
 
-    private fun updateButtons() {
-        if (currentPosition > 0) {
-            binding.prevButton.isEnabled = true
-            binding.prevButton.alpha = 1.0f
-        } else {
-            binding.prevButton.isEnabled = false
-            binding.prevButton.alpha = 0.6f
+    private fun updateButtons(isNextEnabled: Boolean) {
+        binding.nextButton.isEnabled = isNextEnabled
+        binding.prevButton.isEnabled = currentPosition > 0
+        if (binding.prevButton.isEnabled || binding.nextButton.isEnabled) {
+            updateActionButtonsViews(View.VISIBLE)
         }
-
-        binding.actionButtonsLayout.visibility = View.VISIBLE
     }
 
     private fun showContent() {
         binding.loadingBar.visibility = View.INVISIBLE
         binding.contentCard.visibility = View.VISIBLE
 
-        updateButtons()
+        updateButtons(true)
     }
 
     private fun showNetworkError() {
         binding.loadingBar.visibility = View.INVISIBLE
-        binding.networkErrorLayout.visibility = View.VISIBLE
+        updateNetworkErrorViews(View.VISIBLE)
+        updateButtons(false)
     }
 
     private fun showEmptyError() {
         binding.loadingBar.visibility = View.INVISIBLE
-        binding.emptyErrorLayout.visibility = View.VISIBLE
+        updateEmptyErrorViews(View.VISIBLE)
+
+        if (currentPosition > 0) {
+            updateButtons(false)
+        }
     }
 
     private fun showLoading() {
-        binding.welcomeMessageLayout.visibility = View.INVISIBLE
-        binding.networkErrorLayout.visibility = View.INVISIBLE
-        binding.actionButtonsLayout.visibility = View.INVISIBLE
+        updateEmptyErrorViews(View.INVISIBLE)
+        updateNetworkErrorViews(View.INVISIBLE)
+        updateActionButtonsViews(View.INVISIBLE)
+        hideWelcomeViews()
+
         binding.contentCard.visibility = View.INVISIBLE
         binding.loadingBar.visibility = View.VISIBLE
     }
 
-    private fun loadPost(direction: Direction) {
-        currentPosition += direction.value
-        lifecycleScope.launch { viewModel.loadPost(category, currentPosition) }
+    private fun hideWelcomeViews() {
+        updateViews(
+            binding.welcomeButton,
+            binding.welcomeText,
+            binding.welcomeIcon,
+            visibility = View.INVISIBLE
+        )
+    }
+
+    private fun updateNetworkErrorViews(visibility: Int) {
+        updateViews(
+            binding.networkButton,
+            binding.networkText,
+            binding.networkIcon,
+            visibility = visibility
+        )
+    }
+
+    private fun updateEmptyErrorViews(visibility: Int) {
+        updateViews(
+            binding.emptyText,
+            binding.emptyIcon,
+            visibility = visibility
+        )
+    }
+
+    private fun updateActionButtonsViews(visibility: Int) {
+        updateViews(
+            binding.prevButton,
+            binding.nextButton,
+            visibility = visibility
+        )
+    }
+
+    private fun updateViews(vararg views: View, visibility: Int) {
+        views.forEach { it.visibility = visibility }
     }
 
     override fun onDestroy() {

@@ -6,7 +6,7 @@
     <string name="category_hot">Горячие</string>
 
     <string name="network_error">Произошла ошибка при загрузке данных. Проверьте подключение к сети.</string>
-    <string name="empty_error">Похоже, в этом разделе постов нет. Возвращайтесь немного позже!</string>
+    <string name="empty_error">Похоже, в этом разделе больше постов нет. Возвращайтесь немного позже!</string>
     <string name="welcome_message">Добро пожаловать в Developers Life! Нажмите, чтобы загрузить посты.</string>
     <string name="retry">Повторить</string>
     <string name="start">Начать</string>

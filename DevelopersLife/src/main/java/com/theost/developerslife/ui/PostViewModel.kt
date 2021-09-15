@@ -18,16 +18,21 @@ class PostViewModel : ViewModel() {
     private val _loadingStatus = MutableLiveData<Status>()
     val loadingStatus: LiveData<Status> = _loadingStatus
 
+    private val _currentPosition = MutableLiveData<Int>()
+    val currentPosition: LiveData<Int> = _currentPosition
+
     private var data = mutableListOf<Post>()
     private var currentPage = -1
 
-    private suspend fun loadData(category: Category, position: Int) {
+    private suspend fun loadData(category: Category, direction: Direction) {
         try {
-            val response = RetrofitHelper.retrofitService.getPosts(category.apiName, currentPage)
+            val response = RetrofitHelper.retrofitService.getPosts(category.apiName, currentPage + 1)
             if (response.body()!!.list.isNotEmpty()) {
                 data.addAll(response.body()!!.list)
-                loadPost(category, position)
+                currentPage += 1
+                loadPost(category, direction)
             } else {
+                _currentPosition.value = _currentPosition.value?.plus(direction.value) ?: 0
                 _loadingStatus.postValue(Status.EMPTY)
             }
         } catch (e: Exception) {
@@ -35,13 +40,13 @@ class PostViewModel : ViewModel() {
         }
     }
 
-    suspend fun loadPost(category: Category, position: Int) {
+    suspend fun loadPost(category: Category, direction: Direction) {
         _loadingStatus.postValue(Status.LOADING)
-        if (position >= data.size) {
-            currentPage += 1
-            loadData(category, position)
+        if (_currentPosition.value?.plus(direction.value) ?: 0 >= data.size) {
+            loadData(category, direction)
         } else {
-            _allData.postValue(data[position])
+            _currentPosition.value = _currentPosition.value?.plus(direction.value) ?: 0
+            _allData.postValue(data[currentPosition.value!!])
         }
     }
 

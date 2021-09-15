@@ -4,10 +4,9 @@
     package="com.theost.developerslife">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_config"
@@ -17,11 +16,10 @@
         tools:targetApi="n">
         <activity
             android:name=".ui.FeedActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:configChanges="orientation|screenSize"
+            tools:ignore="IntentFilterExportedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
